@@ -1,47 +1,57 @@
-const AMBULANCES = [
-  { id: "AMB-01", unit: "Alpha-1", hospital: "City General", status: "en_route", eta: "4 min" },
-  { id: "AMB-02", unit: "Bravo-2", hospital: "Metro Care", status: "available", eta: "—" },
-  { id: "AMB-03", unit: "Charlie-3", hospital: "Riverside Medical", status: "on_scene", eta: "—" },
-  { id: "AMB-04", unit: "Delta-4", hospital: "City General", status: "transport", eta: "12 min" },
-];
+import { GlassCard } from "../components/ui/GlassCard";
+import { PageHeader } from "../components/ui/PageHeader";
+import { SectionTitle } from "../components/ui/SectionTitle";
+import { StatusBadge } from "../components/ui/StatusBadge";
+import { AMBULANCES } from "../data/mockData";
+import { PAGE_SUBTITLES } from "../config/navigation";
 
 export function AmbulanceNetworkPage() {
   return (
-    <section className="card">
-      <div className="card-header">
-        <h3>Fleet status</h3>
-        <span className="topbar-meta">{AMBULANCES.length} units tracked</span>
+    <>
+      <PageHeader title="Ambulance Network" subtitle={PAGE_SUBTITLES["/ambulance-network"]} />
+      <div className="grid-3">
+        {[
+          { label: "Active", count: AMBULANCES.filter((a) => a.status === "active").length, color: "#34d399" },
+          { label: "Standby", count: AMBULANCES.filter((a) => a.status === "standby").length, color: "#818cf8" },
+          { label: "Returning", count: AMBULANCES.filter((a) => a.status === "returning").length, color: "#fbbf24" },
+        ].map((s) => (
+          <GlassCard key={s.label}>
+            <div style={{ fontSize: "2rem", fontWeight: 800, color: s.color }}>{s.count}</div>
+            <div className="text-muted">{s.label}</div>
+          </GlassCard>
+        ))}
       </div>
-      <div className="table-wrap">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Unit</th>
-              <th>Base hospital</th>
-              <th>Status</th>
-              <th>ETA</th>
-            </tr>
-          </thead>
-          <tbody>
-            {AMBULANCES.map((a) => (
-              <tr key={a.id}>
-                <td>
-                  <strong>🚑 {a.unit}</strong>
-                  <br />
-                  <small className="text-muted">{a.id}</small>
-                </td>
-                <td>{a.hospital}</td>
-                <td>
-                  <span className={`badge badge--${a.status.replace("_", "-")}`}>
-                    {a.status.replace("_", " ")}
-                  </span>
-                </td>
-                <td>{a.eta}</td>
+      <GlassCard>
+        <SectionTitle icon="🚑" title="Fleet Status" />
+        <div className="table-wrap">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Unit ID</th>
+                <th>Status</th>
+                <th>Location</th>
+                <th>ETA</th>
+                <th>Crew</th>
+                <th>Load</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
+            </thead>
+            <tbody>
+              {AMBULANCES.map((a) => (
+                <tr key={a.id}>
+                  <td className="mono-cell">{a.id}</td>
+                  <td><StatusBadge status={a.status} /></td>
+                  <td>{a.location}</td>
+                  <td><strong>{a.eta}</strong></td>
+                  <td>{a.crew}</td>
+                  <td>{a.load}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </GlassCard>
+    </>
   );
 }
+
+

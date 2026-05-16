@@ -1,4 +1,4 @@
-export const APP_NAME = "HEMS AI";
+export const APP_NAME = "MedSync";
 export const APP_TAGLINE = "Mission Control";
 
 export type NavItem = {
@@ -8,6 +8,7 @@ export type NavItem = {
   end?: boolean;
 };
 
+/** Sidebar items — matches mission-control modules */
 export const NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Dashboard", icon: "📊", end: true },
   { to: "/hospitals", label: "Hospitals", icon: "🏥" },
@@ -21,13 +22,25 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 export const PAGE_TITLES: Record<string, string> = {
-  "/": "Dashboard",
-  "/hospitals": "Hospitals",
+  "/": "Mission Control Dashboard",
+  "/hospitals": "Hospital Management",
   "/resource-exchange": "Resource Exchange",
   "/emergency-control": "Emergency Control",
   "/ambulance-network": "Ambulance Network",
-  "/ai-predictions": "AI Predictions",
-  "/water-quality": "Water Quality",
-  "/iot-management": "IoT Management",
-  "/settings": "Settings",
+  "/ai-predictions": "AI Predictive Analytics",
+  "/water-quality": "Water Quality Monitoring",
+  "/iot-management": "IoT Sensor Management",
+  "/settings": "System Settings",
+};
+
+export const PAGE_SUBTITLES: Record<string, string> = {
+  "/": "National healthcare coordination — live system overview",
+  "/hospitals": "Monitor all connected hospitals in real time",
+  "/resource-exchange": "Track and manage inter-hospital resource transfers",
+  "/emergency-control": "Live emergency case management and response coordination",
+  "/ambulance-network": "Fleet tracking and dispatch coordination",
+  "/ai-predictions": "Machine-learning forecasts for healthcare and environment",
+  "/water-quality": "Real-time hospital water safety sensors",
+  "/iot-management": "Connected devices, health status and analytics",
+  "/settings": "System configuration and preferences",
 };

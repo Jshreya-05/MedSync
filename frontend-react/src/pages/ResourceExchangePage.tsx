@@ -1,65 +1,84 @@
-const MOCK_REQUESTS = [
-  {
-    id: "req-001",
-    from: "City General Hospital",
-    resource: "Oxygen cylinders",
-    qty: 12,
-    status: "pending",
-  },
-  {
-    id: "req-002",
-    from: "Metro Care Center",
-    resource: "ICU beds",
-    qty: 3,
-    status: "approved",
-  },
-  {
-    id: "req-003",
-    from: "Riverside Medical",
-    resource: "Ventilators",
-    qty: 2,
-    status: "fulfilled",
-  },
-];
+import { GlassCard } from "../components/ui/GlassCard";
+import { PageHeader } from "../components/ui/PageHeader";
+import { SectionTitle } from "../components/ui/SectionTitle";
+import { StatusBadge } from "../components/ui/StatusBadge";
+import { RESOURCE_STOCK, RESOURCES } from "../data/mockData";
+import { PAGE_SUBTITLES } from "../config/navigation";
 
 export function ResourceExchangePage() {
+  const inTransit = RESOURCES.filter((r) => r.status === "in-transit").length;
+  const approved = RESOURCES.filter((r) => r.status === "approved").length;
+  const pending = RESOURCES.filter((r) => r.status === "pending").length;
+
   return (
-  <>
-      <section className="card">
-        <div className="card-header">
-          <h3>Inter-hospital resource exchange</h3>
-          <span className="topbar-meta">Approve &amp; route supplies</span>
-        </div>
+    <>
+      <PageHeader title="Resource Exchange" subtitle={PAGE_SUBTITLES["/resource-exchange"]} />
+      <div className="grid-3">
+        {[
+          { label: "In Transit", count: inTransit, color: "#818cf8" },
+          { label: "Approved", count: approved, color: "#34d399" },
+          { label: "Pending", count: pending, color: "#fbbf24" },
+        ].map((s) => (
+          <GlassCard key={s.label}>
+            <div style={{ fontSize: "2rem", fontWeight: 800, color: s.color }}>{s.count}</div>
+            <div className="text-muted">{s.label}</div>
+          </GlassCard>
+        ))}
+      </div>
+
+      <SectionTitle icon="📦" title="Live Resource Stock" />
+      <div className="stock-grid" style={{ marginBottom: "1.5rem" }}>
+        {RESOURCE_STOCK.map((s) => (
+          <div key={s.item} className="stock-card">
+            <StatusBadge status={s.status} />
+            <div className="stock-card__value" style={{ marginTop: 8 }}>
+              {s.level}
+              {s.unit === "%" ? "%" : ` ${s.unit}`}
+            </div>
+            <div style={{ fontSize: "0.8rem", fontWeight: 600 }}>{s.item}</div>
+            <div className={`stock-card__trend stock-card__trend--${s.trend < 0 ? "down" : "up"}`}>
+              Shortage forecast: {s.trend < 0 ? "declining" : "stable"}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <GlassCard>
+        <SectionTitle icon="🔄" title="Active Transfers" />
         <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Request ID</th>
-                <th>From hospital</th>
-                <th>Resource</th>
+                <th>Item</th>
+                <th>From</th>
+                <th>To</th>
                 <th>Qty</th>
                 <th>Status</th>
+                <th>Priority</th>
               </tr>
             </thead>
             <tbody>
-              {MOCK_REQUESTS.map((r) => (
+              {RESOURCES.map((r) => (
                 <tr key={r.id}>
-                  <td className="mono-cell">{r.id}</td>
+                  <td><strong>{r.item}</strong></td>
                   <td>{r.from}</td>
-                  <td>{r.resource}</td>
-                  <td>{r.qty}</td>
+                  <td>{r.to}</td>
+                  <td style={{ color: "var(--accent-bright)", fontWeight: 700 }}>{r.qty}</td>
+                  <td><StatusBadge status={r.status} label={r.status.replace("-", " ")} /></td>
                   <td>
-                    <span className={`badge badge--${r.status}`}>{r.status}</span>
+                    <StatusBadge
+                      status={r.urgent ? "critical" : "stable"}
+                      label={r.urgent ? "Urgent" : "Normal"}
+                    />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </section>
-      <p className="page-hint">
-        Backend route <code>POST /api/resource-request</code> will replace mock data in Phase 2.
-      </p>
+      </GlassCard>
     </>
   );
 }
+
+
